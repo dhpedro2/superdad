@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Super Dad – Donate</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    :root {
+      --pink-100: #fff0f5;
+      --pink-200: #ffd6e8;
+      --pink-300: #ffadd2;
+      --pink-400: #ff85bf;
+      --pink-500: #ff5fa8;
+      --pink-600: #e0468e;
+      --pink-700: #b5246e;
+      --white: #ffffff;
+      --text: #5a2040;
+      --muted: #c07099;
+      --shadow: 0 8px 40px rgba(224, 70, 142, 0.18);
+      --radius: 24px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--pink-100);
+      min-height: 100vh;
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ── Floating hearts ── */
+    .hearts-bg {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      overflow: hidden;
+    }
+    .heart {
+      position: absolute;
+      bottom: -60px;
+      font-size: 1.4rem;
+      opacity: 0;
+      animation: floatUp linear infinite;
+    }
+    @keyframes floatUp {
+      0%   { transform: translateY(0) rotate(-10deg); opacity: 0; }
+      10%  { opacity: 0.55; }
+      90%  { opacity: 0.3; }
+      100% { transform: translateY(-110vh) rotate(15deg); opacity: 0; }
+    }
+
+    /* ── Page wrapper ── */
+    .page {
+      position: relative; z-index: 1;
+      max-width: 540px;
+      margin: 0 auto;
+      padding: 40px 20px 60px;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      margin-bottom: 36px;
+      animation: fadeDown .7s ease both;
+    }
+    @keyframes fadeDown {
+      from { opacity:0; transform:translateY(-24px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .crown { font-size: 3.4rem; display: block; margin-bottom: 6px; filter: drop-shadow(0 4px 8px rgba(255,95,168,.5)); }
+    .hero h1 {
+      font-family: 'Pacifico', cursive;
+      font-size: clamp(2.4rem, 7vw, 3.2rem);
+      color: var(--pink-600);
+      line-height: 1.1;
+      text-shadow: 0 3px 10px rgba(224,70,142,.25);
+    }
+    .hero p {
+      margin-top: 10px;
+      font-size: 1.05rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 32px 28px;
+      margin-bottom: 22px;
+      animation: fadeUp .6s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(24px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .card:nth-child(2) { animation-delay:.1s; }
+    .card:nth-child(3) { animation-delay:.2s; }
+    .card:nth-child(4) { animation-delay:.3s; }
+
+    .section-label {
+      font-size: .8rem;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--pink-500);
+      margin-bottom: 14px;
+    }
+
+    /* ── Crypto selector ── */
+    .crypto-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .crypto-btn {
+      border: 2.5px solid var(--pink-200);
+      background: var(--pink-100);
+      border-radius: 14px;
+      padding: 12px 6px;
+      cursor: pointer;
+      text-align: center;
+      transition: all .2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+    .crypto-btn:hover {
+      border-color: var(--pink-400);
+      background: var(--pink-200);
+      transform: translateY(-2px);
+    }
+    .crypto-btn.active {
+      border-color: var(--pink-500);
+      background: linear-gradient(135deg, var(--pink-200), var(--pink-300));
+      box-shadow: 0 4px 16px rgba(255,95,168,.3);
+      transform: translateY(-2px);
+    }
+    .crypto-icon { font-size: 1.5rem; }
+    .crypto-name { font-size: .72rem; font-weight: 800; color: var(--text); }
+    .crypto-ticker { font-size: .65rem; font-weight: 600; color: var(--muted); }
+
+    /* ── Address box ── */
+    .address-wrap {
+      background: var(--pink-100);
+      border: 2px dashed var(--pink-300);
+      border-radius: 14px;
+      padding: 16px;
+      word-break: break-all;
+      font-size: .82rem;
+      font-weight: 700;
+      color: var(--pink-700);
+      line-height: 1.6;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      cursor: pointer;
+      transition: background .2s;
+      position: relative;
+    }
+    .address-wrap:hover { background: var(--pink-200); }
+    .address-text { flex: 1; }
+    .copy-btn {
+      flex-shrink: 0;
+      background: var(--pink-400);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: .7rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background .2s;
+      white-space: nowrap;
+    }
+    .copy-btn:hover { background: var(--pink-600); }
+    .copy-toast {
+      position: absolute;
+      top: -32px; right: 0;
+      background: var(--pink-600);
+      color: #fff;
+      font-size: .72rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 8px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s;
+    }
+    .copy-toast.show { opacity: 1; }
+
+    /* ── QR ── */
+    #qr-container {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+    }
+    #qr-container canvas,
+    #qr-container img {
+      border-radius: 14px;
+      border: 4px solid var(--pink-300);
+      padding: 8px;
+      background: #fff;
+      box-shadow: 0 4px 20px rgba(255,95,168,.2);
+    }
+
+    /* ── Message ── */
+    .msg-label {
+      font-size: .85rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    textarea {
+      width: 100%;
+      border: 2.5px solid var(--pink-200);
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-family: 'Nunito', sans-serif;
+      font-size: .95rem;
+      color: var(--text);
+      background: var(--pink-100);
+      resize: vertical;
+      min-height: 110px;
+      transition: border-color .2s, box-shadow .2s;
+      outline: none;
+    }
+    textarea:focus {
+      border-color: var(--pink-400);
+      box-shadow: 0 0 0 4px rgba(255,133,191,.2);
+    }
+    .msg-hint {
+      margin-top: 8px;
+      font-size: .75rem;
+      color: var(--muted);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ── Send button (decorative) ── */
+    .send-btn {
+      width: 100%;
+      margin-top: 16px;
+      background: linear-gradient(135deg, var(--pink-400), var(--pink-600));
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      padding: 16px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      letter-spacing: .04em;
+      transition: transform .15s, box-shadow .15s;
+      box-shadow: 0 6px 20px rgba(224,70,142,.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .send-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(224,70,142,.45);
+    }
+    .send-btn:active { transform: scale(.98); }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      font-size: .78rem;
+      color: var(--muted);
+      font-weight: 600;
+      margin-top: 10px;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      border: none;
+      border-top: 2px dashed var(--pink-200);
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Floating hearts -->
+<div class="hearts-bg" id="heartsBg"></div>
+
+<div class="page">
+
+  <!-- Hero -->
+  <div class="hero">
+    <span class="crown">👑</span>
+    <h1>Super Dad</h1>
+    <p>Show some love & support 💕</p>
+  </div>
+
+  <!-- Crypto selector -->
+  <div class="card" style="animation-delay:.05s">
+    <div class="section-label">💸 Choose Your Crypto</div>
+    <div class="crypto-grid" id="cryptoGrid">
+      <button class="crypto-btn active" data-id="eth">
+        <span class="crypto-icon">🔷</span>
+        <span class="crypto-name">Ethereum</span>
+        <span class="crypto-ticker">ETH</span>
+      </button>
+      <button class="crypto-btn" data-id="sol">
+        <span class="crypto-icon">🟣</span>
+        <span class="crypto-name">Solana</span>
+        <span class="crypto-ticker">SOL</span>
+      </button>
+      <button class="crypto-btn" data-id="btc">
+        <span class="crypto-icon">🟡</span>
+        <span class="crypto-name">Bitcoin</span>
+        <span class="crypto-ticker">BTC</span>
+      </button>
+      <button class="crypto-btn" data-id="usdt">
+        <span class="crypto-icon">💚</span>
+        <span class="crypto-name">Tether</span>
+        <span class="crypto-ticker">USDT</span>
+      </button>
+      <button class="crypto-btn" data-id="xrp">
+        <span class="crypto-icon">🔵</span>
+        <span class="crypto-name">Ripple</span>
+        <span class="crypto-ticker">XRP</span>
+      </button>
+    </div>
+
+    <!-- Address display -->
+    <div class="section-label">📋 Wallet Address</div>
+    <div class="address-wrap" id="addressBox">
+      <span class="address-text" id="addressText">0x9bbb15637b41418c71cb282b695807b456787b87</span>
+      <button class="copy-btn" id="copyBtn" onclick="copyAddress()">Copy</button>
+      <span class="copy-toast" id="copyToast">Copied! 🎉</span>
+    </div>
+
+    <!-- QR Code -->
+    <div id="qr-container">
+      <div id="qrcode"></div>
+    </div>
+  </div>
+
+  <!-- Message -->
+  <div class="card">
+    <div class="section-label">💌 Leave a Message</div>
+    <div class="msg-label">✍️ Write something sweet for Super Dad</div>
+    <textarea id="msgInput" placeholder="e.g. Happy Father's Day! You're the best dad in the world! 🌟"></textarea>
+    <div class="msg-hint">ℹ️ This message is just for you — it won't be sent anywhere.</div>
+    <button class="send-btn">
+      <span>💝</span> Send Love to Super Dad
+    </button>
+    <div style="margin-top:10px; text-align:center; font-size:.75rem; color:var(--muted); font-weight:700;">
+      * Please send your donation manually to the wallet address above.
+    </div>
+  </div>
+
+  <div class="footer">Made with 💖 for the world's greatest dad</div>
+</div>
+
+<script>
+  const cryptos = {
+    eth:  { label: 'ETH',  addr: '0x9bbb15637b41418c71cb282b695807b456787b87' },
+    sol:  { label: 'SOL',  addr: 'FDUZtwrwriHqDdEThrgJ7STEJphYcZhiEEEimGB2Yb2K' },
+    btc:  { label: 'BTC',  addr: 'bc1qttkuhukejzvqssdazsmkf6s80mqhfkhq90aacs' },
+    usdt: { label: 'USDT', addr: 'TXnYPp97g7VbE9ghhT8Vg77M3jC9JgEEf9' },
+    xrp:  { label: 'XRP',  addr: 'rM8uVyUgyKAs3wH1vTEdwye8JjpWdrjHW1' },
+  };
+
+  let current = 'eth';
+  let qrInstance = null;
+
+  function renderQR(addr) {
+    const el = document.getElementById('qrcode');
+    el.innerHTML = '';
+    qrInstance = new QRCode(el, {
+      text: addr,
+      width: 180,
+      height: 180,
+      colorDark: '#b5246e',
+      colorLight: '#fff0f5',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  }
+
+  function selectCrypto(id) {
+    current = id;
+    document.querySelectorAll('.crypto-btn').forEach(b => b.classList.toggle('active', b.dataset.id === id));
+    document.getElementById('addressText').textContent = cryptos[id].addr;
+    renderQR(cryptos[id].addr);
+  }
+
+  document.getElementById('cryptoGrid').addEventListener('click', e => {
+    const btn = e.target.closest('.crypto-btn');
+    if (btn) selectCrypto(btn.dataset.id);
+  });
+
+  function copyAddress() {
+    const addr = cryptos[current].addr;
+    navigator.clipboard.writeText(addr).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = addr; document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+    });
+    const toast = document.getElementById('copyToast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+  }
+
+  // Prevent actual form send
+  document.querySelector('.send-btn').addEventListener('click', () => {
+    const msg = document.getElementById('msgInput').value.trim();
+    if (!msg) { document.getElementById('msgInput').focus(); return; }
+    const btn = document.querySelector('.send-btn');
+    const orig = btn.innerHTML;
+    btn.innerHTML = '🎉 Message saved!';
+    btn.style.background = 'linear-gradient(135deg,#f0abfc,#e879f9)';
+    setTimeout(() => { btn.innerHTML = orig; btn.style.background = ''; }, 2500);
+  });
+
+  // Floating hearts
+  const emojis = ['💕','💗','💖','💝','💞','🌸','✨','💫','🎀'];
+  const bg = document.getElementById('heartsBg');
+  function spawnHeart() {
+    const h = document.createElement('span');
+    h.className = 'heart';
+    h.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    h.style.left = Math.random()*100 + 'vw';
+    const dur = 7 + Math.random()*8;
+    h.style.animationDuration = dur + 's';
+    h.style.animationDelay = Math.random()*4 + 's';
+    h.style.fontSize = (.9+Math.random()*.8) + 'rem';
+    bg.appendChild(h);
+    setTimeout(() => h.remove(), (dur+4)*1000);
+  }
+  for(let i=0;i<18;i++) setTimeout(spawnHeart, i*400);
+  setInterval(spawnHeart, 1800);
+
+  // Init QR
+  renderQR(cryptos.eth.addr);
+</script>
+</body>
+</html>
